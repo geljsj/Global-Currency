@@ -153,8 +153,8 @@ margin-bottom:10px;
 </head>
 <body>
 <div class="top-info">
-<h2>🌏 Global Currency</h2>
-<div class="guide-text">
+<h2 id="main-title">🌏 Global Currency</h2>
+<div class="guide-text" id="main-guide">
 Enter an amount to convert all currencies instantly.<br>
 Use the buttons below to add tips quickly.
 </div>
@@ -172,22 +172,40 @@ Use the buttons below to add tips quickly.
 </div>
 </div>
 <script>
+// 언어 설정 감지
+const userLang = navigator.language || navigator.userLanguage;
+const isKor = userLang.startsWith('ko');
+
+// 언어별 텍스트 설정
+const i18n = {
+    title: isKor ? "🌏 세계여행 환율 계산기" : "🌏 Global Currency",
+    guide: isKor ? "금액을 입력하면 모든 통화로 동시 변환됩니다.<br>하단 버튼으로 빠르게 팁을 추가해 보세요." : "Enter an amount to convert all currencies instantly.<br>Use the buttons below to add tips quickly.",
+    cached: isKor ? "🟡 캐시된 데이터" : "🟡 Cached",
+    updated: isKor ? "✅ 업데이트됨" : "✅ Updated",
+    offline: isKor ? "⚠️ 오프라인 모드" : "⚠️ Offline Mode"
+};
+
+// UI 텍스트 적용
+document.getElementById('main-title').innerText = i18n.title;
+document.getElementById('main-guide').innerHTML = i18n.guide;
+
 const currencies=[
-{code:'USD',name:'United States',iso:'us'},
-{code:'EUR',name:'Eurozone',iso:'eu'},
-{code:'KRW',name:'South Korea',iso:'kr'},
-{code:'JPY',name:'Japan',iso:'jp'},
-{code:'CNY',name:'China',iso:'cn'},
-{code:'TRY',name:'Turkey',iso:'tr'},
-{code:'CZK',name:'Czechia',iso:'cz'},
-{code:'HUF',name:'Hungary',iso:'hu'},
-{code:'THB',name:'Thailand',iso:'th'},
-{code:'VND',name:'Vietnam',iso:'vn'},
-{code:'PHP',name:'Philippines',iso:'ph'},
-{code:'TWD',name:'Taiwan',iso:'tw'},
-{code:'HKD',name:'Hong Kong',iso:'hk'},
-{code:'SGD',name:'Singapore',iso:'sg'}
+{code:'USD',name: isKor ? '미국' : 'United States',iso:'us'},
+{code:'EUR',name: isKor ? '유로존' : 'Eurozone',iso:'eu'},
+{code:'KRW',name: isKor ? '대한민국' : 'South Korea',iso:'kr'},
+{code:'JPY',name: isKor ? '일본' : 'Japan',iso:'jp'},
+{code:'CNY',name: isKor ? '중국' : 'China',iso:'cn'},
+{code:'TRY',name: isKor ? '터키' : 'Turkey',iso:'tr'},
+{code:'CZK',name: isKor ? '체코' : 'Czechia',iso:'cz'},
+{code:'HUF',name: isKor ? '헝가리' : 'Hungary',iso:'hu'},
+{code:'THB',name: isKor ? '태국' : 'Thailand',iso:'th'},
+{code:'VND',name: isKor ? '베트남' : 'Vietnam',iso:'vn'},
+{code:'PHP',name: isKor ? '필리핀' : 'Philippines',iso:'ph'},
+{code:'TWD',name: isKor ? '대만' : 'Taiwan',iso:'tw'},
+{code:'HKD',name: isKor ? '홍콩' : 'Hong Kong',iso:'hk'},
+{code:'SGD',name: isKor ? '싱가포르' : 'Singapore',iso:'sg'}
 ];
+
 let rates={};
 let lastFocusedId='USD';
 const baseCurrency='USD';
@@ -226,7 +244,7 @@ if(lastFetch && now-lastFetch < TWELVE_HOURS){
 const cached=localStorage.getItem(CACHE_KEY);
 if(cached){
 rates=JSON.parse(cached);
-document.getElementById('last-update').innerText=`🟡 Cached: ${new Date(parseInt(lastFetch)).toLocaleTimeString()}`;
+document.getElementById('last-update').innerText=`${i18n.cached}: ${new Date(parseInt(lastFetch)).toLocaleTimeString()}`;
 renderInputs();
 return;
 }
@@ -239,13 +257,13 @@ if(data.result==="success"){
 rates=data.rates;
 localStorage.setItem(CACHE_KEY,JSON.stringify(rates));
 localStorage.setItem(TIME_KEY,now);
-document.getElementById('last-update').innerText=`✅ Updated: ${new Date().toLocaleTimeString()}`;
+document.getElementById('last-update').innerText=`${i18n.updated}: ${new Date().toLocaleTimeString()}`;
 }
 }catch(e){
 const cached=localStorage.getItem(CACHE_KEY);
 if(cached){
 rates=JSON.parse(cached);
-document.getElementById('last-update').innerText="⚠️ Offline Mode";
+document.getElementById('last-update').innerText= i18n.offline;
 }
 }
 renderInputs();
@@ -254,7 +272,7 @@ renderInputs();
 function formatCurrency(code,value){
 if(value===0) return '';
 const noDecimal=['KRW','JPY','VND','HUF'];
-return Number(value).toLocaleString('en-US',{
+return Number(value).toLocaleString(isKor ? 'ko-KR' : 'en-US',{
 minimumFractionDigits:0,
 maximumFractionDigits:noDecimal.includes(code)?0:2
 });

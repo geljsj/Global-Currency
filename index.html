@@ -83,8 +83,8 @@ h2 {
 }
 
 .container-card {
-    /* 하단 safe area 여백을 적용하여 버튼이 가려지지 않게 함 */
-    padding: 20px 20px calc(20px + env(safe-area-inset-bottom)) 20px;
+/* 하단 패딩을 env(safe-area-inset-bottom)에 추가 여백을 더해 넉넉히 잡음 */
+    padding: 20px 20px calc(40px + env(safe-area-inset-bottom)) 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -92,7 +92,8 @@ h2 {
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
     box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
-    max-height: 75vh;
+    /* 카드가 화면을 너무 많이 차지해 버튼을 밀어내지 않도록 높이 하향 조정 */
+    max-height: 60vh; 
 }
 
 /* 입력창 목록 영역만 스크롤 허용 */
@@ -182,8 +183,9 @@ input {
     text-align: center;
     color: var(--label);
     font-weight: 600;
+    /* 상태 표시줄이 버튼 바로 밑에 붙도록 조정 */
     padding-top: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 0; 
 }
 </style>
 </head>

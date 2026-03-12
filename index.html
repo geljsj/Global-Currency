@@ -32,7 +32,7 @@
 }
 }
 
-/* 전체 화면 고정 및 스크롤 바운스 방지 */
+/* 앱처럼 고정된 화면 설정 */
 html, body {
     margin: 0;
     padding: 0;
@@ -51,9 +51,9 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
+/* 상단 여백을 넉넉하게 주어 카드를 아래로 배치 */
 .top-info {
-    /* 하단 카드를 내리기 위해 아래쪽 패딩(60px)을 늘림 */
-    padding: calc(40px + env(safe-area-inset-top)) 25px 60px 25px;
+    padding: calc(60px + env(safe-area-inset-top)) 25px 40px 25px;
     display: flex;
     flex-direction: column;
 }
@@ -81,17 +81,16 @@ h2 {
 }
 
 .container-card {
-    /* 카드가 아래에 딱 붙도록 하단 여백 최적화 */
-    padding: 20px 20px calc(15px + env(safe-area-inset-bottom)) 20px;
+    /* 하단 잘림 방지를 위해 아래쪽 패딩 확보 */
+    padding: 25px 20px calc(30px + env(safe-area-inset-bottom)) 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     background: var(--card);
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
+    border-top-left-radius: 40px; /* 좀 더 둥글게 */
+    border-top-right-radius: 40px;
     box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
-    /* 카드가 너무 위로 올라오지 않게 최대 높이 제한 */
-    max-height: 65vh;
+    max-height: 70vh;
 }
 
 #inputs {
@@ -106,17 +105,16 @@ h2 {
 
 .input-group {
     background: var(--input-bg);
-    padding: 8px 12px;
-    border-radius: 14px;
+    padding: 10px 12px;
+    border-radius: 16px;
     border: 2px solid transparent;
-    transition: all .3s cubic-bezier(.25,1,.5,1);
+    transition: all .3s ease;
 }
 
 .input-group:focus-within {
     border-color: var(--primary);
     background: var(--card);
     box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    transform: translateY(-1px);
 }
 
 .label-wrapper {
@@ -160,22 +158,22 @@ input {
     flex: 1;
     padding: 16px 0;
     border: none;
-    border-radius: 16px;
+    border-radius: 18px;
     background: var(--primary);
     color: white;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 14px;
     cursor: pointer;
     transition: transform 0.1s;
 }
 
 .tip-btn:active {
-    transform: scale(0.96);
-    opacity: 0.9;
+    transform: scale(0.95);
+    opacity: 0.8;
 }
 
 .status {
-    font-size: 10px;
+    font-size: 11px;
     text-align: center;
     color: var(--label);
     font-weight: 600;
@@ -197,7 +195,7 @@ input {
         <button class="tip-btn" onclick="applyTip(1.15)">+15%</button>
         <button class="tip-btn" onclick="applyTip(1.20)">+20%</button>
     </div>
-    <div class="status" id="last-update">Updating...</div>
+    <div id="last-update" class="status">Updating...</div>
 </div>
 </div>
 
@@ -207,9 +205,9 @@ const isKor = userLang.startsWith('ko');
 
 const i18n = {
     title: isKor ? "🌏 세계여행 환율 계산기" : "🌏 Global Currency",
-    guide: isKor ? "금액을 입력하면 모든 통화로 동시 변환됩니다.<br>하단 버튼으로 빠르게 팁을 추가해 보세요." : "Enter an amount to convert all currencies instantly.<br>Use the buttons below to add tips quickly.",
-    cached: isKor ? "🟡 캐시된 데이터" : "🟡 Cached",
-    updated: isKor ? "✅ 업데이트됨" : "✅ Updated",
+    guide: isKor ? "금액을 입력하면 동시 변환됩니다.<br>팁 버튼으로 빠르게 계산해 보세요." : "Enter amount to convert instantly.<br>Use buttons to add tips quickly.",
+    cached: isKor ? "🟡 캐시됨" : "🟡 Cached",
+    updated: isKor ? "✅ 업데이트 완료" : "✅ Updated",
     offline: isKor ? "⚠️ 오프라인 모드" : "⚠️ Offline Mode"
 };
 
@@ -245,15 +243,12 @@ const group=document.createElement('div');
 group.className='input-group';
 group.innerHTML=`
 <div class="label-wrapper">
-    <img class="flag-icon" src="https://flagcdn.com/w40/${cur.iso}.png" alt="${cur.code}">
+    <img class="flag-icon" src="https://flagcdn.com/w40/${cur.iso}.png">
     <label>${cur.code} (${cur.name})</label>
 </div>
-<input type="text"
-inputmode="decimal"
-id="${cur.code}"
-placeholder="0"
+<input type="text" inputmode="decimal" id="${cur.code}" placeholder="0"
 oninput="handleInput('${cur.code}')"
-onfocus="lastFocusedId='${cur.code}'; setTimeout(()=>event.target.select(),50)"
+onfocus="lastFocusedId='${cur.code}'; this.select();"
 onclick="this.select()">
 `;
 container.appendChild(group);
@@ -261,13 +256,12 @@ container.appendChild(group);
 }
 
 async function fetchRates(){
-const CACHE_KEY=`rates_global_${baseCurrency}`;
-const TIME_KEY=`rates_time_global_${baseCurrency}`;
-const TWELVE_HOURS=12*60*60*1000;
+const CACHE_KEY=`rates_v3_${baseCurrency}`;
+const TIME_KEY=`time_v3_${baseCurrency}`;
 const now=Date.now();
 const lastFetch=localStorage.getItem(TIME_KEY);
 
-if(lastFetch && now-lastFetch < TWELVE_HOURS){
+if(lastFetch && now-lastFetch < 43200000){ // 12시간 캐시
 const cached=localStorage.getItem(CACHE_KEY);
 if(cached){
 rates=JSON.parse(cached);
@@ -288,9 +282,9 @@ document.getElementById('last-update').innerText=`${i18n.updated}: ${new Date().
 }
 }catch(e){
 const cached=localStorage.getItem(CACHE_KEY);
-if(cached){
+if(cached) {
 rates=JSON.parse(cached);
-document.getElementById('last-update').innerText= i18n.offline;
+document.getElementById('last-update').innerText=i18n.offline;
 }
 }
 renderInputs();
@@ -308,10 +302,7 @@ maximumFractionDigits:noDecimal.includes(code)?0:2
 function handleInput(code){
 const el=document.getElementById(code);
 let val=el.value.replace(/,/g,'');
-if(val===''||isNaN(val)){
-updateAll(code,0);
-return;
-}
+if(val===''||isNaN(val)){ updateAll(code,0); return; }
 updateAll(code,parseFloat(val));
 }
 
@@ -337,7 +328,7 @@ updateAll(lastFocusedId,tipped);
 }
 }
 
-// 터치 움직임으로 인한 화면 전체 스크롤 방지
+// 전체 스크롤 방지
 document.addEventListener('touchmove', function (e) {
     if (e.target.closest('#inputs')) return; 
     e.preventDefault();

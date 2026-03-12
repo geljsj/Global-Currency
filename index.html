@@ -13,6 +13,9 @@
 <meta name="application-name" content="GlobalCurrency">
 <meta name="theme-color" content="#007aff">
 
+<meta name="description" content="Simple global currency converter for travelers. Instantly convert USD, EUR, KRW, JPY, TRY, CZK, HUF and more.">
+<meta name="keywords" content="currency converter, travel money calculator, exchange rate">
+
 <style>
 :root {
 --bg:#f2f2f7;
@@ -32,7 +35,7 @@
 }
 }
 
-/* 앱처럼 고정된 화면 설정 */
+/* 전체 화면 고정 및 스크롤 바운스 방지 */
 html, body {
     margin: 0;
     padding: 0;
@@ -51,9 +54,8 @@ body {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* 상단 여백을 넉넉하게 주어 카드를 아래로 배치 */
 .top-info {
-    padding: calc(60px + env(safe-area-inset-top)) 25px 40px 25px;
+    padding: calc(40px + env(safe-area-inset-top)) 25px 20px 25px;
     display: flex;
     flex-direction: column;
 }
@@ -81,22 +83,24 @@ h2 {
 }
 
 .container-card {
-    /* 하단 잘림 방지를 위해 아래쪽 패딩 확보 */
-    padding: 25px 20px calc(30px + env(safe-area-inset-bottom)) 20px;
+    /* 하단 safe area 여백을 적용하여 버튼이 가려지지 않게 함 */
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom)) 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     background: var(--card);
-    border-top-left-radius: 40px; /* 좀 더 둥글게 */
-    border-top-right-radius: 40px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
     box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
-    max-height: 70vh;
+    max-height: 75vh;
 }
 
+/* 입력창 목록 영역만 스크롤 허용 */
 #inputs {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+    max-height: 50vh;
     overflow-y: auto;
     padding: 2px;
     overscroll-behavior-y: contain;
@@ -105,16 +109,17 @@ h2 {
 
 .input-group {
     background: var(--input-bg);
-    padding: 10px 12px;
-    border-radius: 16px;
+    padding: 8px 12px;
+    border-radius: 14px;
     border: 2px solid transparent;
-    transition: all .3s ease;
+    transition: all .3s cubic-bezier(.25,1,.5,1);
 }
 
 .input-group:focus-within {
     border-color: var(--primary);
     background: var(--card);
     box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    transform: translateY(-1px);
 }
 
 .label-wrapper {
@@ -158,26 +163,27 @@ input {
     flex: 1;
     padding: 16px 0;
     border: none;
-    border-radius: 18px;
+    border-radius: 16px;
     background: var(--primary);
     color: white;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     transition: transform 0.1s;
 }
 
 .tip-btn:active {
-    transform: scale(0.95);
-    opacity: 0.8;
+    transform: scale(0.96);
+    opacity: 0.9;
 }
 
 .status {
-    font-size: 11px;
+    font-size: 10px;
     text-align: center;
     color: var(--label);
     font-weight: 600;
     padding-top: 8px;
+    margin-bottom: 10px;
 }
 </style>
 </head>
@@ -195,7 +201,7 @@ input {
         <button class="tip-btn" onclick="applyTip(1.15)">+15%</button>
         <button class="tip-btn" onclick="applyTip(1.20)">+20%</button>
     </div>
-    <div id="last-update" class="status">Updating...</div>
+    <div class="status" id="last-update">Updating...</div>
 </div>
 </div>
 
@@ -205,9 +211,9 @@ const isKor = userLang.startsWith('ko');
 
 const i18n = {
     title: isKor ? "🌏 세계여행 환율 계산기" : "🌏 Global Currency",
-    guide: isKor ? "금액을 입력하면 동시 변환됩니다.<br>팁 버튼으로 빠르게 계산해 보세요." : "Enter amount to convert instantly.<br>Use buttons to add tips quickly.",
-    cached: isKor ? "🟡 캐시됨" : "🟡 Cached",
-    updated: isKor ? "✅ 업데이트 완료" : "✅ Updated",
+    guide: isKor ? "금액을 입력하면 모든 통화로 동시 변환됩니다.<br>하단 버튼으로 빠르게 팁을 추가해 보세요." : "Enter an amount to convert all currencies instantly.<br>Use the buttons below to add tips quickly.",
+    cached: isKor ? "🟡 캐시된 데이터" : "🟡 Cached",
+    updated: isKor ? "✅ 업데이트됨" : "✅ Updated",
     offline: isKor ? "⚠️ 오프라인 모드" : "⚠️ Offline Mode"
 };
 
@@ -243,12 +249,15 @@ const group=document.createElement('div');
 group.className='input-group';
 group.innerHTML=`
 <div class="label-wrapper">
-    <img class="flag-icon" src="https://flagcdn.com/w40/${cur.iso}.png">
+    <img class="flag-icon" src="https://flagcdn.com/w40/${cur.iso}.png" alt="${cur.code}">
     <label>${cur.code} (${cur.name})</label>
 </div>
-<input type="text" inputmode="decimal" id="${cur.code}" placeholder="0"
+<input type="text"
+inputmode="decimal"
+id="${cur.code}"
+placeholder="0"
 oninput="handleInput('${cur.code}')"
-onfocus="lastFocusedId='${cur.code}'; this.select();"
+onfocus="lastFocusedId='${cur.code}'; setTimeout(()=>event.target.select(),50)"
 onclick="this.select()">
 `;
 container.appendChild(group);
@@ -256,12 +265,13 @@ container.appendChild(group);
 }
 
 async function fetchRates(){
-const CACHE_KEY=`rates_v3_${baseCurrency}`;
-const TIME_KEY=`time_v3_${baseCurrency}`;
+const CACHE_KEY=`rates_global_${baseCurrency}`;
+const TIME_KEY=`rates_time_global_${baseCurrency}`;
+const TWELVE_HOURS=12*60*60*1000;
 const now=Date.now();
 const lastFetch=localStorage.getItem(TIME_KEY);
 
-if(lastFetch && now-lastFetch < 43200000){ // 12시간 캐시
+if(lastFetch && now-lastFetch < TWELVE_HOURS){
 const cached=localStorage.getItem(CACHE_KEY);
 if(cached){
 rates=JSON.parse(cached);
@@ -282,9 +292,9 @@ document.getElementById('last-update').innerText=`${i18n.updated}: ${new Date().
 }
 }catch(e){
 const cached=localStorage.getItem(CACHE_KEY);
-if(cached) {
+if(cached){
 rates=JSON.parse(cached);
-document.getElementById('last-update').innerText=i18n.offline;
+document.getElementById('last-update').innerText= i18n.offline;
 }
 }
 renderInputs();
@@ -302,7 +312,10 @@ maximumFractionDigits:noDecimal.includes(code)?0:2
 function handleInput(code){
 const el=document.getElementById(code);
 let val=el.value.replace(/,/g,'');
-if(val===''||isNaN(val)){ updateAll(code,0); return; }
+if(val===''||isNaN(val)){
+updateAll(code,0);
+return;
+}
 updateAll(code,parseFloat(val));
 }
 
@@ -328,7 +341,7 @@ updateAll(lastFocusedId,tipped);
 }
 }
 
-// 전체 스크롤 방지
+// 터치 움직임으로 인한 화면 전체 스크롤 방지
 document.addEventListener('touchmove', function (e) {
     if (e.target.closest('#inputs')) return; 
     e.preventDefault();

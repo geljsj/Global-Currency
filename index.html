@@ -51,8 +51,9 @@ body {
 }
 
 .top-info {
-    /* 상단 여백을 줄여 전체적인 UI를 아래로 집중시킴 */
-    padding: calc(30px + env(safe-area-inset-top)) 25px 15px 25px;
+    /* 기존 30px에서 약 20% 늘린 36px로 제목 위치를 내림 */
+    /* 텍스트와 카드 사이 간격(15px)은 유지하여 UI 비례 유지 */
+    padding: calc(50px + env(safe-area-inset-top)) 25px 15px 25px;
     display: flex;
     flex-direction: column;
 }
@@ -81,7 +82,7 @@ h2 {
 
 .container-card {
     /* 한손 UI: 하단 바 잘림 방지를 위해 calc 여백 최적화 */
-    padding: 20px 20px calc(25px + env(safe-area-inset-bottom)) 20px;
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom)) 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -90,7 +91,7 @@ h2 {
     border-top-right-radius: 30px;
     box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
     /* 카드가 너무 높이 올라오지 않게 하여 하단 집중도 유지 */
-    max-height: 70vh; 
+    max-height: 60vh; 
 }
 
 #inputs {
@@ -134,7 +135,7 @@ h2 {
 
 label {
     font-size: 9px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--label);
 }
 
@@ -152,8 +153,8 @@ input {
 .tip-container {
     display: flex;
     gap: 8px;
-    margin-top: 5px;
-    padding-bottom: 5px; /* 버튼 하단 미세 여백 */
+    margin-top: 1px;
+    padding-bottom: 1px; /* 버튼 하단 미세 여백 */
 }
 
 .tip-btn {
@@ -179,7 +180,7 @@ input {
     text-align: center;
     color: var(--label);
     font-weight: 600;
-    padding-top: 8px;
+    padding-top: 5px;
 }
 </style>
 </head>

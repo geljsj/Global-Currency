@@ -32,7 +32,7 @@
 }
 }
 
-/* 앱처럼 고정하기 위해 html, body 스크롤 금지 */
+/* 전체 화면 고정 및 스크롤 바운스 방지 */
 html, body {
     margin: 0;
     padding: 0;
@@ -52,7 +52,8 @@ body {
 }
 
 .top-info {
-    padding: calc(40px + env(safe-area-inset-top)) 25px 20px 25px;
+    /* 하단 카드를 내리기 위해 아래쪽 패딩(60px)을 늘림 */
+    padding: calc(40px + env(safe-area-inset-top)) 25px 60px 25px;
     display: flex;
     flex-direction: column;
 }
@@ -80,7 +81,8 @@ h2 {
 }
 
 .container-card {
-    padding: 20px 20px calc(20px + env(safe-area-inset-bottom)) 20px;
+    /* 카드가 아래에 딱 붙도록 하단 여백 최적화 */
+    padding: 20px 20px calc(15px + env(safe-area-inset-bottom)) 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -88,15 +90,14 @@ h2 {
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
     box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
-    max-height: 75vh;
+    /* 카드가 너무 위로 올라오지 않게 최대 높이 제한 */
+    max-height: 65vh;
 }
 
-/* 입력창 목록 영역만 스크롤 허용 */
 #inputs {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    max-height: 50vh;
     overflow-y: auto;
     padding: 2px;
     overscroll-behavior-y: contain;
@@ -179,7 +180,6 @@ input {
     color: var(--label);
     font-weight: 600;
     padding-top: 8px;
-    margin-bottom: 10px;
 }
 </style>
 </head>

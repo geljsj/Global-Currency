@@ -1,316 +1,667 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
+
+
 <meta charset="UTF-8">
+
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+
 <title>Global Currency Converter</title>
+
+
+
+<link rel="apple-touch-icon" href="logo.jpg">
+
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+
+
+
 <meta name="apple-mobile-web-app-capable" content="yes">
+
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<style>
-:root {
---bg:#f2f2f7;
---card:#ffffff;
---text:#000000;
---label:#8e8e93;
---input-bg:#f2f2f7;
---primary:#007aff;
-}
-@media(prefers-color-scheme: dark){
-:root{
---bg:#000000;
---card:#1c1c1e;
---text:#ffffff;
---label:#8e8e93;
---input-bg:#2c2c2e;
-}
-}
-body{
-font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-background:var(--bg);
-margin:0;
-padding:0;
-display:flex;
-flex-direction:column;
-height:100vh;
-overscroll-behavior:none;
-overflow:hidden;
-}
-.top-info{
-padding:40px 25px 20px 25px;
-display: flex;
-flex-direction: column;
-}
-h2{
-font-size:26px;
-margin:0;
-font-weight:800;
-letter-spacing:-1px;
-color:var(--text);
-}
-.guide-text{
-font-size:13px;
-color:var(--label);
-font-weight:500;
-line-height:1.5;
-margin-top:8px;
-}
-.bottom-area{
-margin-top:auto;
-display:flex;
-flex-direction:column;
-}
-.container-card{
-padding:20px;
-display:flex;
-flex-direction:column;
-gap:12px;
-background:var(--card);
-border-top-left-radius:30px;
-border-top-right-radius:30px;
-box-shadow:0 -10px 30px rgba(0,0,0,0.08);
-padding-bottom:env(safe-area-inset-bottom,20px);
-max-height:75vh;
-}
-#inputs{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-max-height:50vh;
-overflow-y:auto;
-padding:2px;
--webkit-overflow-scrolling:touch;
-}
-.input-group{
-background:var(--input-bg);
-padding:8px 12px;
-border-radius:14px;
-border:2px solid transparent;
-transition:all .3s cubic-bezier(.25,1,.5,1);
-}
-.input-group:focus-within{
-border-color:var(--primary);
-background:var(--card);
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-transform:translateY(-1px);
-}
-.label-wrapper {
-display: flex;
-align-items: center;
-gap: 6px;
-margin-bottom: 2px;
-}
-.flag-icon {
-width: 16px;
-height: 12px;
-object-fit: cover;
-border-radius: 2px;
-}
-label{
-font-size:9px;
-font-weight:700;
-color:var(--label);
-}
-input{
-width:100%;
-border:none;
-background:transparent;
-font-size:18px;
-font-weight:700;
-color:var(--text);
-outline:none;
-padding:0;
-}
-.tip-container{
-display:flex;
-gap:8px;
-margin-top:5px;
-}
-.tip-btn{
-flex:1;
-padding:16px 0;
-border:none;
-border-radius:16px;
-background:var(--primary);
-color:white;
-font-weight:700;
-font-size:13px;
-cursor:pointer;
-transition: transform 0.1s;
-}
-.tip-btn:active {
-transform: scale(0.96);
-opacity: 0.9;
-}
-.status{
-font-size:10px;
-text-align:center;
-color:var(--label);
-font-weight:600;
-padding-top:8px;
-margin-bottom:10px;
-}
-</style>
+
+<meta name="apple-mobile-web-app-title" content="GlobalCurrency">
+
+<meta name="application-name" content="GlobalCurrency">
+
+
+
+<meta name="theme-color" content="#007aff">
+
+
+
+<meta name="description" content="Simple global currency converter for travelers. Instantly convert USD, EUR, KRW, JPY, TRY, CZK, HUF and more.">
+
+<meta name="keywords" content="currency converter, travel money calculator, exchange rate">
+
+<meta name="author" content="Global Currency">
+
+
+
 </head>
+
+    
+
+<style>
+
+:root {
+
+--bg:#f2f2f7;
+
+--card:#ffffff;
+
+--text:#000000;
+
+--label:#8e8e93;
+
+--input-bg:#f2f2f7;
+
+--primary:#007aff;
+
+}
+
+@media(prefers-color-scheme: dark){
+
+:root{
+
+--bg:#000000;
+
+--card:#1c1c1e;
+
+--text:#ffffff;
+
+--label:#8e8e93;
+
+--input-bg:#2c2c2e;
+
+}
+
+}
+
+body{
+
+font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+
+background:var(--bg);
+
+margin:0;
+
+padding:0;
+
+display:flex;
+
+flex-direction:column;
+
+height:100vh;
+
+overscroll-behavior:none;
+
+overflow:hidden;
+
+}
+
+.top-info{
+
+padding:40px 25px 20px 25px;
+
+display: flex;
+
+flex-direction: column;
+
+}
+
+h2{
+
+font-size:26px;
+
+margin:0;
+
+font-weight:800;
+
+letter-spacing:-1px;
+
+color:var(--text);
+
+}
+
+.guide-text{
+
+font-size:13px;
+
+color:var(--label);
+
+font-weight:500;
+
+line-height:1.5;
+
+margin-top:8px;
+
+}
+
+.bottom-area{
+
+margin-top:auto;
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.container-card{
+
+padding:20px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+background:var(--card);
+
+border-top-left-radius:30px;
+
+border-top-right-radius:30px;
+
+box-shadow:0 -10px 30px rgba(0,0,0,0.08);
+
+padding-bottom:env(safe-area-inset-bottom,20px);
+
+max-height:75vh;
+
+}
+
+#inputs{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:10px;
+
+max-height:50vh;
+
+overflow-y:auto;
+
+padding:2px;
+
+-webkit-overflow-scrolling:touch;
+
+}
+
+.input-group{
+
+background:var(--input-bg);
+
+padding:8px 12px;
+
+border-radius:14px;
+
+border:2px solid transparent;
+
+transition:all .3s cubic-bezier(.25,1,.5,1);
+
+}
+
+.input-group:focus-within{
+
+border-color:var(--primary);
+
+background:var(--card);
+
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+transform:translateY(-1px);
+
+}
+
+.label-wrapper {
+
+display: flex;
+
+align-items: center;
+
+gap: 6px;
+
+margin-bottom: 2px;
+
+}
+
+.flag-icon {
+
+width: 16px;
+
+height: 12px;
+
+object-fit: cover;
+
+border-radius: 2px;
+
+}
+
+label{
+
+font-size:9px;
+
+font-weight:700;
+
+color:var(--label);
+
+}
+
+input{
+
+width:100%;
+
+border:none;
+
+background:transparent;
+
+font-size:18px;
+
+font-weight:700;
+
+color:var(--text);
+
+outline:none;
+
+padding:0;
+
+}
+
+.tip-container{
+
+display:flex;
+
+gap:8px;
+
+margin-top:5px;
+
+}
+
+.tip-btn{
+
+flex:1;
+
+padding:16px 0;
+
+border:none;
+
+border-radius:16px;
+
+background:var(--primary);
+
+color:white;
+
+font-weight:700;
+
+font-size:13px;
+
+cursor:pointer;
+
+transition: transform 0.1s;
+
+}
+
+.tip-btn:active {
+
+transform: scale(0.96);
+
+opacity: 0.9;
+
+}
+
+.status{
+
+font-size:10px;
+
+text-align:center;
+
+color:var(--label);
+
+font-weight:600;
+
+padding-top:8px;
+
+margin-bottom:10px;
+
+}
+
+</style>
+
+</head>
+
 <body>
+
 <div class="top-info">
+
 <h2 id="main-title">🌏 Global Currency</h2>
+
 <div class="guide-text" id="main-guide">
+
 Enter an amount to convert all currencies instantly.<br>
+
 Use the buttons below to add tips quickly.
+
 </div>
+
 </div>
+
 <div class="bottom-area">
+
 <div class="container-card">
+
     <div id="inputs"></div>
+
     <div class="tip-container">
+
         <button class="tip-btn" onclick="applyTip(1.05)">+5%</button>
+
         <button class="tip-btn" onclick="applyTip(1.10)">+10%</button>
+
         <button class="tip-btn" onclick="applyTip(1.15)">+15%</button>
+
         <button class="tip-btn" onclick="applyTip(1.20)">+20%</button>
+
     </div>
+
     <div class="status" id="last-update">Updating...</div>
+
 </div>
+
 </div>
+
 <script>
+
 // 언어 설정 감지
+
 const userLang = navigator.language || navigator.userLanguage;
+
 const isKor = userLang.startsWith('ko');
 
+
+
 // 언어별 텍스트 설정
+
 const i18n = {
+
     title: isKor ? "🌏 세계여행 환율 계산기" : "🌏 Global Currency",
+
     guide: isKor ? "금액을 입력하면 모든 통화로 동시 변환됩니다.<br>하단 버튼으로 빠르게 팁을 추가해 보세요." : "Enter an amount to convert all currencies instantly.<br>Use the buttons below to add tips quickly.",
+
     cached: isKor ? "🟡 캐시된 데이터" : "🟡 Cached",
+
     updated: isKor ? "✅ 업데이트됨" : "✅ Updated",
+
     offline: isKor ? "⚠️ 오프라인 모드" : "⚠️ Offline Mode"
+
 };
 
+
+
 // UI 텍스트 적용
+
 document.getElementById('main-title').innerText = i18n.title;
+
 document.getElementById('main-guide').innerHTML = i18n.guide;
 
+
+
 const currencies=[
+
 {code:'USD',name: isKor ? '미국' : 'United States',iso:'us'},
+
 {code:'EUR',name: isKor ? '유로존' : 'Eurozone',iso:'eu'},
+
 {code:'KRW',name: isKor ? '대한민국' : 'South Korea',iso:'kr'},
+
 {code:'JPY',name: isKor ? '일본' : 'Japan',iso:'jp'},
+
 {code:'CNY',name: isKor ? '중국' : 'China',iso:'cn'},
+
 {code:'TRY',name: isKor ? '터키' : 'Turkey',iso:'tr'},
+
 {code:'CZK',name: isKor ? '체코' : 'Czechia',iso:'cz'},
+
 {code:'HUF',name: isKor ? '헝가리' : 'Hungary',iso:'hu'},
+
 {code:'THB',name: isKor ? '태국' : 'Thailand',iso:'th'},
+
 {code:'VND',name: isKor ? '베트남' : 'Vietnam',iso:'vn'},
+
 {code:'PHP',name: isKor ? '필리핀' : 'Philippines',iso:'ph'},
+
 {code:'TWD',name: isKor ? '대만' : 'Taiwan',iso:'tw'},
+
 {code:'HKD',name: isKor ? '홍콩' : 'Hong Kong',iso:'hk'},
+
 {code:'SGD',name: isKor ? '싱가포르' : 'Singapore',iso:'sg'}
+
 ];
 
+
+
 let rates={};
+
 let lastFocusedId='USD';
+
 const baseCurrency='USD';
 
+
+
 function renderInputs(){
+
 const container=document.getElementById('inputs');
+
 container.innerHTML='';
+
 currencies.forEach(cur=>{
+
 const group=document.createElement('div');
+
 group.className='input-group';
+
 group.innerHTML=`
+
 <div class="label-wrapper">
+
     <img class="flag-icon" src="https://flagcdn.com/w40/${cur.iso}.png" alt="${cur.code}">
+
     <label>${cur.code} (${cur.name})</label>
+
 </div>
+
 <input type="text"
+
 inputmode="decimal"
+
 id="${cur.code}"
+
 placeholder="0"
+
 oninput="handleInput('${cur.code}')"
+
 onfocus="lastFocusedId='${cur.code}'; setTimeout(()=>event.target.select(),50)"
+
 onclick="this.select()">
+
 `;
+
 container.appendChild(group);
+
 });
+
 }
+
+
 
 async function fetchRates(){
+
 const CACHE_KEY=`rates_global_${baseCurrency}`;
+
 const TIME_KEY=`rates_time_global_${baseCurrency}`;
+
 const TWELVE_HOURS=12*60*60*1000;
+
 const now=Date.now();
+
 const lastFetch=localStorage.getItem(TIME_KEY);
 
+
+
 if(lastFetch && now-lastFetch < TWELVE_HOURS){
+
 const cached=localStorage.getItem(CACHE_KEY);
+
 if(cached){
+
 rates=JSON.parse(cached);
+
 document.getElementById('last-update').innerText=`${i18n.cached}: ${new Date(parseInt(lastFetch)).toLocaleTimeString()}`;
+
 renderInputs();
+
 return;
+
 }
+
 }
+
+
 
 try{
+
 const res=await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`);
+
 const data=await res.json();
+
 if(data.result==="success"){
+
 rates=data.rates;
+
 localStorage.setItem(CACHE_KEY,JSON.stringify(rates));
+
 localStorage.setItem(TIME_KEY,now);
+
 document.getElementById('last-update').innerText=`${i18n.updated}: ${new Date().toLocaleTimeString()}`;
+
 }
+
 }catch(e){
+
 const cached=localStorage.getItem(CACHE_KEY);
+
 if(cached){
+
 rates=JSON.parse(cached);
+
 document.getElementById('last-update').innerText= i18n.offline;
+
 }
+
 }
+
 renderInputs();
+
 }
+
+
 
 function formatCurrency(code,value){
+
 if(value===0) return '';
+
 const noDecimal=['KRW','JPY','VND','HUF'];
+
 return Number(value).toLocaleString(isKor ? 'ko-KR' : 'en-US',{
+
 minimumFractionDigits:0,
+
 maximumFractionDigits:noDecimal.includes(code)?0:2
+
 });
+
 }
+
+
 
 function handleInput(code){
+
 const el=document.getElementById(code);
+
 let val=el.value.replace(/,/g,'');
+
 if(val===''||isNaN(val)){
+
 updateAll(code,0);
+
 return;
+
 }
+
 updateAll(code,parseFloat(val));
+
 }
+
+
 
 function updateAll(changedCode,val){
+
 if(!rates[changedCode]) return;
+
 const valInUSD=val/rates[changedCode];
+
 currencies.forEach(c=>{
+
 const targetEl=document.getElementById(c.code);
+
 if(targetEl && c.code!==changedCode){
+
 const result=valInUSD*rates[c.code];
+
 targetEl.value=formatCurrency(c.code,result);
+
 }
+
 });
+
 }
+
+
 
 function applyTip(ratio){
+
 const el=document.getElementById(lastFocusedId);
+
 let val=parseFloat(el.value.replace(/,/g,''));
+
 if(!isNaN(val)){
+
 const tipped=val*ratio;
+
 el.value=formatCurrency(lastFocusedId,tipped);
+
 updateAll(lastFocusedId,tipped);
-}
+
 }
 
+}
+
+
+
 fetchRates();
+
 </script>
+
 </body>
+
 </html>

@@ -80,7 +80,7 @@
 
         #inputs {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
             gap: 10px;
             max-height: 50vh;
             overflow-y: auto;
@@ -133,7 +133,7 @@
             width: 100%;
             border: none;
             background: transparent;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text);
             outline: none;
@@ -282,7 +282,7 @@
         if (lastFetch && now - lastFetch < TWELVE_HOURS) {
             const cached = localStorage.getItem(CACHE_KEY);
             if (cached) {
-                rates = JSON.parse(cached);
+                try {     rates = JSON.parse(cached); } catch (e) {     localStorage.removeItem(CACHE_KEY); }
                 document.getElementById('last-update').innerText = 
                     `${i18n[userLang].cached} ${new Date(parseInt(lastFetch)).toLocaleTimeString()}`;
                 renderInputs();
@@ -303,7 +303,7 @@
         } catch (e) {
             const cached = localStorage.getItem(CACHE_KEY);
             if (cached) {
-                rates = JSON.parse(cached);
+                try {     rates = JSON.parse(cached); } catch (e) {     localStorage.removeItem(CACHE_KEY); }
                 document.getElementById('last-update').innerText = i18n[userLang].offline;
             }
         }
@@ -320,14 +320,28 @@
     }
 
     function handleInput(code) {
-        const el = document.getElementById(code);
-        let val = el.value.replaceAll(',', '');
-        if (val === '' || isNaN(val)) {
-            updateAll(code, 0);
-            return;
-        }
-        updateAll(code, parseFloat(val));
+    const el = document.getElementById(code);
+    
+    // 1. 숫자와 마침표(.)를 제외한 모든 문자 제거
+    let val = el.value.replace(/[^0-9.]/g, '');
+    
+    // 2. 마침표가 여러 개 들어오는 것 방지 (첫 번째 것만 인정)
+    const points = val.split('.');
+    if (points.length > 2) {
+        val = points[0] + '.' + points.slice(1).join('');
     }
+
+    // 화면에 깨끗해진 숫자 반영
+    el.value = val;
+
+    // 계산 로직 실행 (기존 replaceAll 유지)
+    let cleanVal = val.replaceAll(',', '');
+    if (cleanVal === '' || isNaN(cleanVal)) {
+        updateAll(code, 0);
+        return;
+    }
+    updateAll(code, parseFloat(cleanVal));
+}
 
     function updateAll(changedCode, val) {
         if (!rates[changedCode]) return;
@@ -343,7 +357,7 @@
 
     function applyTip(ratio) {
         const el = document.getElementById(lastFocusedId);
-        let val = parseFloat(el.value.replace(/,/g, ''));
+        let val = parseFloat(el.value.replaceAll(',', ''));
         if (!isNaN(val)) {
             const tipped = val * ratio;
             el.value = formatCurrency(lastFocusedId, tipped);
@@ -351,7 +365,7 @@
         }
     }
 
-    fetchRates();
+    renderInputs(); fetchRates();
 </script>
 
 </body>

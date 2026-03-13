@@ -6,7 +6,8 @@
     <title>Global Currency Converter</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2489/2489756.png">
+    <link rel="icon" href="logo.jpg">
+    <link rel="apple-touch-icon" href="logo.jpg">
     <style>
         :root {
             --bg: #f2f2f7;
@@ -40,8 +41,10 @@
         }
 
         .top-info {
-            padding: max(80px, env(safe-area-inset-top)) 25px 10px 25px; 
-            flex-shrink: 0; /* 절대로 위로 밀려나지 않게 고정 */
+            /* 노치 높이(safe-area)에 딱 15px만 더해서 어떤 기기던 동일한 여백 부여 */
+            padding: calc(env(safe-area-inset-top) + 20px) 25px 10px 25px; 
+            flex-shrink: 0;
+            /* 만약 제목이 너무 붙어 보인다면 15px 숫자를 조금씩 키워봐 */
         }
 
         h2 {
@@ -55,7 +58,7 @@
         .guide-text {
             font-size: 13px;
             color: var(--label);
-            font-weight: 500;
+            font-weight: 400;
             line-height: 1.5;
             margin-top: 8px;
         }

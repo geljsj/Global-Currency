@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Global Currency Converter</title>
+    <title>Money Converter</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" href="logo.png">
@@ -38,7 +38,7 @@
             height: 100vh;
             overscroll-behavior: none;
             overflow: hidden;
-            max-width: 700px;    /* 1. 폭의 한계를 500px로 제한 */
+            max-width: 600px;    /* 1. 폭의 한계를 600px로 제한 */
             margin: 0 auto;      /* 2. PC화면에서 가운데로 정렬 */
             position: relative;
             box-shadow: 0 0 80px rgba(0,0,0,0.1);
@@ -52,7 +52,7 @@
         }
 
         h2 {
-            font-size: 26px;
+            font-size: 30px;
             margin: 0;
             font-weight: 800;
             letter-spacing: -1px;
@@ -99,7 +99,7 @@
 
         .input-group {
             background: var(--input-bg);
-            padding: 10px 15px;
+            padding: 8px 10px;
             border-radius: 16px;
             border: 2px solid transparent;
             transition: all .3s ease;
@@ -239,7 +239,7 @@
             offline: "⚠️ 오프라인 모드"
         },
         en: {
-            title: "🌎 Global Currency",
+            title: "🌎 Global Money Converter",
             guide: "Enter an amount to convert all currencies instantly.<br>Tab the buttons below to add tips quickly.",
             update: "✅ Updated:",
             cached: "🟡 Cached Rate:",

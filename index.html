@@ -46,7 +46,7 @@
 
         .top-info {
             /* 노치 높이(safe-area)에 딱 15px만 더해서 어떤 기기던 동일한 여백 부여 */
-            padding: calc(env(safe-area-inset-top) + 30px) 25px 10px 25px; 
+            padding: calc(env(safe-area-inset-top) + 40px) 25px 10px 25px; 
             flex-shrink: 0;
             /* 만약 제목이 너무 붙어 보인다면 15px 숫자를 조금씩 키워봐 */
         }
@@ -213,21 +213,21 @@
 <script>
     // 요청하신 통화 순서 및 국가 코드 매핑
     const currencies = [
-        {code:'USD', name:'United States', iso:'us'},
-        {code:'EUR', name:'European Union', iso:'eu'},
-        {code:'KRW', name:'South Korea', iso:'kr'},
-        {code:'JPY', name:'Japan', iso:'jp'},
-        {code:'CNY', name:'China', iso:'cn'},
-        {code:'TRY', name:'Turkey', iso:'tr'},
-        {code:'CZK', name:'Czech Republic', iso:'cz'},
-        {code:'HUF', name:'Hungary', iso:'hu'},
-        {code:'AED', name:'U.A.E', iso:'ae'},
-        {code:'THB', name:'Thailand', iso:'th'},
-        {code:'VND', name:'Vietnam', iso:'vn'},
-        {code:'PHP', name:'Philippines', iso:'ph'},
-        {code:'TWD', name:'Taiwan', iso:'tw'},
-        {code:'HKD', name:'Hong Kong', iso:'hk'},
-        {code:'SGD', name:'Singapore', iso:'sg'}
+        {code:'USD', name:'United States', nameKo:'미국', iso:'us'},
+        {code:'EUR', name:'European Union', nameKo:'유럽연합', iso:'eu'},
+        {code:'KRW', name:'South Korea', nameKo:'대한민국', iso:'kr'},
+        {code:'JPY', name:'Japan', nameKo:'일본', iso:'jp'},
+        {code:'CNY', name:'China', nameKo:'중국', iso:'cn'},
+        {code:'TRY', name:'Turkey', nameKo:'터키', iso:'tr'},
+        {code:'CZK', name:'Czech Republic', nameKo:'체코', iso:'cz'},
+        {code:'HUF', name:'Hungary', nameKo:'헝가리', iso:'hu'},
+        {code:'AED', name:'U.A.E', nameKo:'아랍에미리트', iso:'ae'},
+        {code:'THB', name:'Thailand', nameKo:'태국', iso:'th'},
+        {code:'VND', name:'Vietnam', nameKo:'베트남', iso:'vn'},
+        {code:'PHP', name:'Philippines', nameKo:'필리핀', iso:'ph'},
+        {code:'TWD', name:'Taiwan', nameKo:'대만', iso:'tw'},
+        {code:'HKD', name:'Hong Kong', nameKo:'홍콩', iso:'hk'},
+        {code:'SGD', name:'Singapore', nameKo:'싱가포르', iso:'sg'}
     ];
 
     const i18n = {
@@ -257,35 +257,38 @@
     document.getElementById('guide').innerHTML = i18n[userLang].guide;
 
     function renderInputs() {
-        const container = document.getElementById('inputs');
-        container.innerHTML = '';
+    const container = document.getElementById('inputs');
+    container.innerHTML = '';
 
-        currencies.forEach(cur => {
-            const group = document.createElement('div');
-            group.className = 'input-group';
-            group.innerHTML = `
-                <div class="label-row">
-                    <img class="flag-icon" src="https://flagcdn.com/w40/${cur.iso}.png" alt="${cur.code}">
-                    <label>${cur.code} (${cur.name})</label>
-                </div>
-                <input type="text" 
-                       inputmode="decimal" 
-                       pattern="[0-9.]*"
-                       id="${cur.code}" 
-                       placeholder="0" 
-                       oninput="handleInput('${cur.code}')" 
-                       onfocus="saveFocus('${cur.code}')"
-                       onclick="this.select()">
-            `;
-            container.appendChild(group);
-        });
+    currencies.forEach(cur => {
+        const group = document.createElement('div');
+        group.className = 'input-group';
+        
+        // 언어에 따라 표시할 이름 선택
+        const displayName = userLang === 'ko' ? cur.nameKo : cur.name;
 
-        // 마지막으로 사용했던 통화에 포커스 (약간의 지연 필요)
-        setTimeout(() => {
-            const lastEl = document.getElementById(lastFocusedId);
-            if(lastEl) lastEl.focus();
-        }, 100);
-    }
+        group.innerHTML = `
+            <div class="label-row">
+                <img loading="lazy" class="flag-icon" src="https://flagcdn.com/w40/${cur.iso}.png" alt="${cur.code}">
+                <label>${cur.code} (${displayName})</label>
+            </div>
+            <input type="text" 
+                   inputmode="decimal" 
+                   pattern="[0-9.]*"
+                   id="${cur.code}" 
+                   placeholder="0" 
+                   oninput="handleInput('${cur.code}')" 
+                   onfocus="saveFocus('${cur.code}')"
+                   onclick="this.select()">
+        `;
+        container.appendChild(group);
+    });
+
+    setTimeout(() => {
+        const lastEl = document.getElementById(lastFocusedId);
+        if(lastEl) lastEl.focus();
+    }, 100);
+}
 
     function saveFocus(code) {
         lastFocusedId = code;
